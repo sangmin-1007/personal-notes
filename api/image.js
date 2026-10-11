@@ -1,0 +1,5 @@
+const OWNER=process.env.GITHUB_OWNER;
+const REPO=process.env.GITHUB_REPO;
+const TOKEN=process.env.GITHUB_TOKEN;
+function cors(res){res.setHeader('Access-Control-Allow-Origin','*');res.setHeader('Cache-Control','private, max-age=3600');}
+module.exports=async(req,res)=>{cors(res);if(req.method!=='GET')return res.status(405).end();if(!OWNER||!REPO||!TOKEN)return res.status(500).end();const path=String(req.query.path||'');if(!/^images\/[a-zA-Z0-9_-]+\.(jpg|png|webp)$/.test(path))return res.status(400).end();try{const r=await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}`,{headers:{'Authorization':`Bearer ${TOKEN}`,'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}});if(!r.ok)return res.status(r.status).end();const f=await r.json();const buf=Buffer.from(f.content.replace(/\n/g,''),'base64');const ext=path.split('.').pop();res.setHeader('Content-Type',ext==='jpg'?'image/jpeg':`image/${ext}`);return res.status(200).send(buf);}catch{return res.status(500).end();}};
