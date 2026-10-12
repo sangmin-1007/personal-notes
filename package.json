@@ -1,0 +1,8 @@
+{
+  "name": "personal-notes-api",
+  "private": true,
+  "type": "commonjs",
+  "dependencies": {
+    "jose": "^6.1.0"
+  }
+}
