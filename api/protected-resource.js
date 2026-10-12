@@ -1,0 +1,2 @@
+const BASE='https://personal-notes-api.vercel.app';
+module.exports=(req,res)=>{res.setHeader('Cache-Control','public, max-age=300');return res.status(200).json({resource:`${BASE}/api/mcp`,authorization_servers:[BASE],scopes_supported:['notes:read','notes:write'],resource_documentation:'https://github.com/sangmin-1007/personal-notes'})};
