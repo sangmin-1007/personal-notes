@@ -19,7 +19,10 @@ async function mergedNotes(base){
     const files=await dir.json();
     const jsons=Array.isArray(files)?files.filter(f=>f.type==='file'&&f.name.endsWith('.json')):[];
     const extra=await Promise.all(jsons.map(f=>readJson(f.path)));
-    for(const p of extra)if(p&&p.id)map.set(p.id,p);
+    for(const p of extra)if(p&&p.id){
+      const existing=map.get(p.id);
+      if(!existing || (Number(p.updated)||0)>=(Number(existing.updated)||0))map.set(p.id,p);
+    }
   }
   const pages=[...map.values()].sort((a,b)=>(Number(b.updated)||0)-(Number(a.updated)||0));
   return{version:1,updatedAt:base.updatedAt||new Date().toISOString(),current:base.current||null,pages};
